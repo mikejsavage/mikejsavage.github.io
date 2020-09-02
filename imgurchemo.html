@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+
+<style>
+img {
+	max-width: 100%;
+}
+</style>
+
+<h1>imgur chemotherapy</h1>
+
+<form id="form">
+	<label for="album">imgur link/album id:</label>
+	<input type="text" id="album" placeholder="https://imgur.com/a/shitwebsite">
+</form>
+
+<script>
+function $( id ) {
+	return document.getElementById( id );
+}
+
+$( "form" ).addEventListener( "submit", function( ev ) {
+	var album = $( "album" ).value;
+	album = album.replace( "https://imgur.com/a/", "" );
+	window.location = window.location.pathname + "?" + album;
+	ev.preventDefault();
+} );
+
+var album = window.location.search.substr( 1 );
+
+if( album != "" ) {
+	var xhr = new XMLHttpRequest();
+
+	xhr.onreadystatechange = function( ev ) {
+		if( ev.target.readyState != 4 || ev.target.status != 200 ) {
+			console.log( ev );
+			return;
+		}
+
+		var response = JSON.parse( ev.target.responseText );
+		for( var i = 0; i < response.data.length; i++ ) {
+			document.body.appendChild( document.createElement( "hr" ) );
+
+			var h4 = document.createElement( "h4" );
+			h4.appendChild( document.createTextNode( response.data[ i ].description ) );
+			document.body.appendChild( h4 );
+
+			var img = document.createElement( "img" );
+			img.src = response.data[ i ].link;
+			document.body.appendChild( img );
+		}
+	}
+
+	var url = "https://api.imgur.com/3/album/" + album + "/images";
+
+	xhr.open( "GET", url );
+	xhr.setRequestHeader( "Authorization", "Client-ID 5dc6065411ee2ab" ); // stolen from some kids github heh
+	xhr.send();
+}
+</script>
