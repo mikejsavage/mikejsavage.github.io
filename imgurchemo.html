@@ -20,6 +20,7 @@ function $( id ) {
 
 $( "form" ).addEventListener( "submit", function( ev ) {
 	var album = $( "album" ).value;
+	album = album.replace( "http://imgur.com/a/", "" );
 	album = album.replace( "https://imgur.com/a/", "" );
 	window.location = window.location.pathname + "?" + album;
 	ev.preventDefault();
